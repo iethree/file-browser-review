@@ -9,11 +9,11 @@ import { renderAsync } from '@test/helpers';
 import type { Folder } from '@types';
 
 describe('File Browser > FolderNavPath', () => {
-  it('should shownav path', async () => {
+  it('should show nav path', async () => {
     await renderAsync(
       <FolderNavPath
         folders={[mockFileData as Folder]}
-        onFolderSelect={jest.fn()}
+        onFolderSelect={vi.fn()}
       />
     );
 
@@ -24,11 +24,11 @@ describe('File Browser > FolderNavPath', () => {
     await renderAsync(
       <FolderNavPath
         folders={[mockFileData as Folder]}
-        onFolderSelect={jest.fn()}
+        onFolderSelect={vi.fn()}
       />
     );
 
-    expect(await screen.findByText('Files')).toBeInTheDocument();
+    expect(await screen.findByText('All Files')).toBeInTheDocument();
   });
 
   it('should show nested folders', async () => {
@@ -39,16 +39,16 @@ describe('File Browser > FolderNavPath', () => {
     ] as Folder[];
 
     await renderAsync(
-      <FolderNavPath folders={folderArray} onFolderSelect={jest.fn()} />
+      <FolderNavPath folders={folderArray} onFolderSelect={vi.fn()} />
     );
 
-    expect(await screen.findByText('Shared Files')).toBeInTheDocument();
+    expect(await screen.findByText('All Files')).toBeInTheDocument();
     expect(await screen.findByText('Tax Returns')).toBeInTheDocument();
     expect(await screen.findByText('misc')).toBeInTheDocument();
   });
 
   it('should fire click handler when a folder name is clicked', async () => {
-    const clickSpy = jest.fn();
+    const clickSpy = vi.fn();
     const folderArray = [
       mockFileData,
       mockFileData.files[6],
@@ -64,7 +64,7 @@ describe('File Browser > FolderNavPath', () => {
   });
 
   it('should return full folder stack when last folder name is clicked', async () => {
-    const clickSpy = jest.fn();
+    const clickSpy = vi.fn();
     const folderArray = [
       mockFileData,
       mockFileData.files[6],
@@ -80,7 +80,7 @@ describe('File Browser > FolderNavPath', () => {
   });
 
   it('should pop off child folders when parent is clicked', async () => {
-    const clickSpy = jest.fn();
+    const clickSpy = vi.fn();
     const folderArray = [
       mockFileData,
       mockFileData.files[6],
@@ -91,7 +91,7 @@ describe('File Browser > FolderNavPath', () => {
       <FolderNavPath folders={folderArray} onFolderSelect={clickSpy} />
     );
 
-    await userEvent.click(screen.getByText('Files'));
+    await userEvent.click(screen.getByText('All Files'));
     expect(clickSpy).toBeCalledWith([mockFileData]);
   });
 });
