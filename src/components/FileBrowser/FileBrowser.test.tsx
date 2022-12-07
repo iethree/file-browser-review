@@ -161,4 +161,92 @@ describe('File Browser', () => {
       screen.getByTestId('fallback-icon');
     });
   });
+
+  describe('FileBrowser > Search', () => {
+    it('should have a search input', async () => {
+      await renderAsync(
+        <MemoryRouter>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      expect(await screen.findByTestId('search-input')).toBeInTheDocument();
+    });
+
+    it('should filter results', async () => {
+      await renderAsync(
+        <MemoryRouter>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      await userEvent.type(await screen.findByTestId('search-input'), 'tax');
+
+      expect(
+        await screen.findByTestId('file-search-results')
+      ).toBeInTheDocument();
+      expect(await screen.findByText('Tax Returns')).toBeInTheDocument();
+      expect(
+        screen.queryByText('Annual Financial Statements')
+      ).not.toBeInTheDocument();
+    });
+
+    it('should filter results in subfolders', async () => {
+      await renderAsync(
+        <MemoryRouter>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      await userEvent.type(await screen.findByTestId('search-input'), 'misc');
+
+      const resultsContainer = await screen.findByTestId('file-search-results');
+
+      // should get 10 misc folders
+      expect(within(resultsContainer).getAllByText(/misc/i)).toHaveLength(10);
+
+      // should show one with bank-statements path
+      expect(
+        within(resultsContainer).getByText('/bank-statements')
+      ).toBeInTheDocument();
+    });
+
+    it('should count results', async () => {
+      await renderAsync(
+        <MemoryRouter>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      await userEvent.type(await screen.findByTestId('search-input'), 'cheese');
+
+      screen.getByText('2 search results');
+    });
+
+    it('should show a max of 10 results', async () => {
+      await renderAsync(
+        <MemoryRouter>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      await userEvent.type(await screen.findByTestId('search-input'), '.p');
+
+      screen.getByText('10+ search results');
+    });
+
+    it('should navigate to a folder on folder click', async () => {
+      await renderAsync(
+        <MemoryRouter initialEntries={['?q=payroll']}>
+          <FileBrowser rootFolder={mockFileData as Folder} />
+        </MemoryRouter>
+      );
+
+      await userEvent.click(await screen.findByText('Payroll Records'));
+      expect(await screen.findByTestId('folder-nav-path')).toBeInTheDocument();
+      expect(
+        await screen.queryByTestId('file-browser-list')
+      ).toBeInTheDocument();
+    });
+  });
 });
