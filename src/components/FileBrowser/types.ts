@@ -1,3 +1,9 @@
-import type { Folder } from '@types';
+import type { Folder, FileItem } from '@types';
 
-export type FolderSelectAction = (newFolder: Folder[] | Folder) => void;
+export type FileSearchItem = Omit<FileItem, 'files'> & {
+  path: string;
+};
+
+export type FolderSelectAction = (
+  newFolder: Folder[] | Folder | FileSearchItem
+) => void;
