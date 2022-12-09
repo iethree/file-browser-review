@@ -80,7 +80,7 @@ export const FileBrowser = ({ rootFolder }: { rootFolder?: Folder }) => {
                 <FolderOrFileComponent
                   key={item.id}
                   item={item}
-                  onFolderSelect={(f) => handleUpdateFolderStack(f as Folder[])}
+                  onFolderSelect={(f) => handleUpdateFolderStack(f as Folder)}
                 />
               ))}
             </Menu>
