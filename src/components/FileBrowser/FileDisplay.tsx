@@ -5,9 +5,10 @@ import {
 } from '@heroicons/react/24/solid';
 import { FolderIcon } from '@heroicons/react/24/outline';
 import type { Folder, File, FileItem } from '@types';
-import type { FolderSelectAction } from './types';
+import { FolderSelectAction, FileSearchItem, isFileSearchItem } from './types';
 
 import { Menu } from 'react-daisyui';
+import { clipLastFolder } from './utils';
 
 const iconClasses = 'w-12 mr-2 flex-shrink-0 text-primary';
 
@@ -15,7 +16,7 @@ export const FolderOrFileComponent = ({
   item,
   onFolderSelect,
 }: {
-  item: FileItem;
+  item: FileItem | FileSearchItem;
   onFolderSelect?: FolderSelectAction;
 }) =>
   item.type === 'folder' ? (
@@ -28,7 +29,7 @@ const FolderComponent = ({
   folder,
   onFolderSelect,
 }: {
-  folder: Folder;
+  folder: Folder | FileSearchItem;
   onFolderSelect?: FolderSelectAction;
 }) => {
   return (
@@ -39,6 +40,9 @@ const FolderComponent = ({
       <a>
         <FolderIcon className={iconClasses} />
         {folder.name}
+        {isFileSearchItem(folder) && (
+          <FilePath path={clipLastFolder(folder.path)} />
+        )}
       </a>
     </Menu.Item>
   );
@@ -56,6 +60,9 @@ const FileComponent = ({ file }: { file: File }) => {
         <div className='min-w-0'>
           <div className='mb-1 overflow-hidden overflow-ellipsis'>
             {file.name}
+          </div>
+          <div className='text-xs text-gray-500'>
+            {isFileSearchItem(file) && <FilePath path={file.path} />}
           </div>
         </div>
       </a>
@@ -83,3 +90,7 @@ export const DocIcon = ({ fileName }: { fileName: string }) => {
 
   return ExtMap[extension] ?? <DocumentIcon className={iconClasses} />;
 };
+
+const FilePath = ({ path }: { path: string }) => (
+  <span className='text-xs text-gray-500 ml-2 break-words'>{path}</span>
+);
